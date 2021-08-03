@@ -1,0 +1,173 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,u ser-scalable=no">
+    <title>Title</title>
+    <link href="../pc/plugins/layui/css/layui.css" rel="stylesheet"/>
+    <!-- 引入layui的样式 -->
+    <script charset="utf-8" src="../pc/plugins/layui/layui.js"></script>
+    <!-- 引入layui的js -->
+    <script charset="UTF-8" src="../pc/js/jquery-1.8.3.js"></script>
+
+</head>
+<body>
+
+<form class="layui-form layui-form-pane" id="form1" action="" method="get" style="text-align: center">
+    <div class="layui-inline">
+        <div class="layui-form-item">
+            <!--<div class="layui-inline">-->
+            <label class="layui-form-label">工程师编号</label>
+            <div class="layui-input-block">
+                <input type="text" name="mid" class="layui-input" id="mid"/>
+                <input type="hidden" name="id" class="layui-input" id="id"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">手机</label>
+            <div class="layui-input-block">
+                <input type="password" name="phone" class="layui-input"  id="phone"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">经度</label>
+            <div class="layui-input-block">
+                <input type="text" name="lng" class="layui-input"  id="lng"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">纬度</label>
+            <div class="layui-input-block">
+                <input type="text" name="lat" class="layui-input"  id="lat"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">救援内容</label>
+            <div class="layui-input-inline">
+                <select name="contents" lay-filter="aihao" id="contents">
+                    <option value=""></option>
+                    <option value="补胎">补胎</option>
+                    <option value="搭电">搭电</option>
+                    <option value="电瓶搭电">电瓶搭电</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">订单状态</label>
+            <div class="layui-input-inline">
+                <select name="status" lay-filter="aihao"  id="status" >
+                    <option value=""></option>
+                    <option value="0">刚下单</option>
+                    <option value="1">已接单</option>
+                    <option value="2">已到达正在修</option>
+                    <option value="3">已完成</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">地址</label>
+            <div class="layui-input-block">
+                <input type="text" name="address" class="layui-input" id="address"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">金额</label>
+            <div class="layui-input-block">
+                <input type="text" name="cost" class="layui-input"  id="cost"/>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+            <button class="layui-btn" value="修改" lay-submit
+                    lay-filter="btnDetais">修改
+            </button>
+        </div>
+    </div>
+    </div>
+</form>
+
+    <script type="text/javascript">
+        var sexx = '';
+        layui.use(['form', 'layer'], function () {
+            var form = layui.form;
+            var $ = layui.jquery;
+            var layer = layui.layer;
+            var index = parent.layer.getFrameIndex(window.name);
+
+            form.render();
+
+            $.ajax({
+                type: 'post',
+                url: '/orders/selectOrederById',
+                dataType: 'JSON',
+                success: function (data) {
+                    $("#id").val(data.id);
+                    $("#mid").val(data.mid);
+                    $("#phone").val(data.phone);
+                    $("#lng").val(data.lng);
+                    $("#lat").val(data.lat);
+                    $("#contents").val(data.contents);
+                    $("#status").val(data.status);
+                    $("#address").val(data.address);
+                    $("#cost").val(data.cost);
+                },
+                error: function (data) {
+                    alert(data.master.name)
+                    alert("异常");
+                }
+            })
+
+
+            form.on('submit(btnDetais)', function (data) {
+                $.ajax({
+                    type: "post",
+                    url: "/orders/uptMasterBid",
+                    data: $("#form1").serialize(),
+                    dataType: "JSON",
+                    success: function (data) {
+                        alert(data.msg);
+                        if (data.code == 0) {
+
+                        } else if (data == "error") {
+
+                        }
+                        parent.layer.close(index);
+                    },
+                    error: function () {
+                        alert("修改异常");
+                    }
+                });
+                return false;
+            });
+        });
+
+
+        // layui.use('form', function () {
+        //     var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+        //     form.render();
+        // });
+
+
+        // if (sexx == '1') {
+        //     $.each($("input[name='sex']"), function (index, res) {//index是索引,从0开始
+        //         if (res.value == '男') {
+        //             $(res).prop('checked', true);//data表示数据的内容,比如男女
+        //         }
+        //     })
+        // } else {
+        //     $.each($("input[name='sex']"), function (index, res) {//index是索引,从0开始
+        //
+        //         if (res.value == '女') {
+        //             $(res).prop('checked', true);//data表示数据的内容,比如男女
+        //         }
+        //     })
+        // }
+
+
+    </script>
+</form>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,u ser-scalable=no">
+		<link rel="stylesheet" type="text/css" href="/res/css/reset.css"/>
+		<script type="text/javascript" src="/res/js/jquery-3.2.1.js"></script>
+		<title></title>
+		<style type="text/css">
+			html { background: #efefef; }
+			p { position: relative;height: 1rem;width: 90%;margin: 0 auto;border-bottom: 1px solid lightgray; }
+			p input { outline: none;text-indent: 0.4rem;font-size: 0.3rem;height: 100%;width: 100%;background: rgba(0,0,0,0); }
+			p span { display: inline-block;font-size: 0.3rem;color: gray;position: absolute;top: 0.35rem;right: 0.3rem; }
+			div { width: 80%;height: 1rem;line-height: 1rem;text-align: center;background: #D81E06;color: #fff;font-size: 0.3rem;margin: 0.5rem auto 0;border-radius: 0.1rem; }
+			i { width: 100%;text-align: center;display: inline-block;color: gray;margin-top: 0.4rem; }
+			i wet { color: blue; }
+		</style>
+	</head>
+	<body>
+		<form id="form1">
+		<p style="padding-top: 2rem;">
+			<input type="text" value="admin" id="account" name="account" placeholder="输入账号" />
+		</p>
+		<p>
+			<input type="password" value="admin"  id="password"  name="password" placeholder="输入密码" />
+		</p>
+		<div id="login">登录</div>
+		<i>道路千万条，安全第一条。<br/>行车不规范，亲人两行泪!</i>
+		</form>
+	</body>
+	<script type="text/javascript">
+			//   url  /api/master/login
+				$(function () {
+					 $("#login").click(function () {
+					 	var account = $('#account').val();
+					 	var password = $('#password').val();
+						$.ajax({
+							url:'/api/master/login',
+							type:'POST',
+							data: {
+								'account': account ,
+								'password': password
+							},
+							dataType:'JSON',
+							success:function (res) {
+								if(res.code===0){
+									window.location.href="/res/html/manager/index.html"////res/html/manager/index.html
+								}else{
+									alert("账户和密码错误.")
+								}
+							}
+						});
+					 });
+				});
+	</script>
+</html>

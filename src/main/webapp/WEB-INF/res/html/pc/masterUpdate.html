@@ -1,0 +1,169 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,u ser-scalable=no">
+    <title>Title</title>
+    <link href="../pc/plugins/layui/css/layui.css" rel="stylesheet"/>
+    <!-- 引入layui的样式 -->
+    <script charset="utf-8" src="../pc/plugins/layui/layui.js"></script>
+    <!-- 引入layui的js -->
+    <script charset="UTF-8" src="../pc/js/jquery-1.8.3.js"></script>
+
+</head>
+<body>
+
+<form class="layui-form layui-form-pane" action="#" method="post" id="form1">
+    <input type="hidden" name="id" class="layui-input"/>
+    <div class="layui-form-item">
+        <label class="layui-form-label">姓名</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" class="layui-input" id="name"/>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">年龄</label>
+        <div class="layui-input-block">
+            <input type="text" name="age" class="layui-input" id="age"/>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">性别</label>
+        <div class="layui-input-block" id="sex">
+            <!--<input type="radio" name="sex" value="男" title="男">
+            <input type="radio" name="sex" value="女" title="女">-->
+        </div>
+    </div>
+
+    <div class="layui-form-item" width="200px">
+        <label class="layui-form-label">手机号</label>
+        <div class="layui-input-inline">
+            <input type="text" name="phone" class="layui-input" id="phone"/>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">账号</label>
+        <div class="layui-input-block">
+            <input type="text" name="account" class="layui-input" id="account"/>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-block">
+            <input type="password" name="password" class="layui-input" id="password"/>
+        </div>
+    </div>
+
+
+    <input type="hidden" name="id" id="id" />
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" value="修改" lay-submit
+                    lay-filter="btnDetais">修改
+            </button>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        var sexx = '';
+        layui.use(['form', 'layer'], function () {
+            var form = layui.form;
+            var $ = layui.jquery;
+            var layer = layui.layer;
+            var index = parent.layer.getFrameIndex(window.name);
+
+            form.render();
+
+            $.ajax({
+                type: 'post',
+                url: '/api/master/selectOrederById',
+                dataType: 'JSON',
+                success: function (data) {
+                    $("#id").val(data.id);
+                    $("#name").val(data.name);
+                    $("#age").val(data.age);
+                    var str = "";
+                    if (data.sex == '男') {
+                        $("#sex").html();
+                        $("#sex").append('<input type="radio" name="sex" value="男" title="男" checked=""><input type="radio" name="sex" value="女" title="女" >');
+                        layui.use(['form'], function () {
+                            var form = layui.form;
+                            form.render()
+                        })
+                    } else {
+                        $("#sex").html();
+                        $("#sex").append('<input type="radio" name="sex" value="男" title="男" ><input type="radio" name="sex" value="女" title="女" checked="">');
+                        layui.use(['form'], function () {
+                            var form = layui.form;
+                            form.render()
+                        })
+                    }
+                    $("#phone").val(data.phone);
+                    $("#account").val(data.account);
+                    $("#password").val(data.password);
+                },
+                error: function (data) {
+                    alert(data.master.name)
+                    alert("异常");
+                }
+            })
+
+
+            form.on('submit(btnDetais)', function (data) {
+                $.ajax({
+                    type: "post",
+                    url: "/api/master/uptMasterBid",
+                    data: $("#form1").serialize(),
+                    dataType: "JSON",
+                    success: function (data) {
+                        alert(data.msg);
+                        if (data == "success") {
+
+                        } else if (data == "error") {
+
+                        }
+                        parent.layer.close(index);
+                    },
+                    error: function () {
+                        alert("修改异常");
+                    }
+                });
+                return false;
+            });
+        });
+
+
+        // layui.use('form', function () {
+        //     var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+        //     form.render();
+        // });
+
+
+        // if (sexx == '1') {
+        //     $.each($("input[name='sex']"), function (index, res) {//index是索引,从0开始
+        //         if (res.value == '男') {
+        //             $(res).prop('checked', true);//data表示数据的内容,比如男女
+        //         }
+        //     })
+        // } else {
+        //     $.each($("input[name='sex']"), function (index, res) {//index是索引,从0开始
+        //
+        //         if (res.value == '女') {
+        //             $(res).prop('checked', true);//data表示数据的内容,比如男女
+        //         }
+        //     })
+        // }
+
+
+    </script>
+</form>
+</body>
+</html>

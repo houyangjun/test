@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,u ser-scalable=no">
+		<script type="text/javascript" src="//api.map.baidu.com/api?v=2.0&ak=nMNrp1GCujEioBNGCsdkRK305PA4IiGG"></script>
+		<link rel="stylesheet" type="text/css" href="/res/css/reset.css"/>
+		<link rel="stylesheet" type="text/css" href="/res/css/index.css"/>
+		<script type="text/javascript" src="/res/js/jquery-3.2.1.js"></script>
+		<title>困境救援服务</title>
+	</head>
+	<body>
+	<script type="text/javascript">
+		$.ajax({
+			url:"/getSession",
+			type : 'get',
+			success : function(data) {
+				if(data=='success'){
+					$("#login").html("<img class=\"logo\" src=\"/res/img/icon7.png\"/><br/><span class=\"login\">查看</span>");
+				}else{
+					$("#login").html("<img class=\"logo\" src=\"/res/img/icon7.png\"/><br/><span class=\"login\" onclick=\"location.href='login'\">登录</span>");
+				}
+			}
+		});
+	</script>
+	<form id="form1">
+		<!--顶部操作栏-->
+		<div class="nav">
+			<span>
+				<img src="/res/img/icon1.png"/>
+			</span>
+		</div>
+		<!--地图模块-->
+		<div class="map" id="map" style="font-size: 2rem;"></div>	
+		<div class="left">
+			<div class="left_main">
+				<div id="login">
+					
+				</div>
+				<p>
+					<span onclick="location.href='/res/html/manager/myOrder.html'">我的订单</span>
+					<img src="/res/img/icon8.png"/>
+				</p>
+				<p>
+					<span onclick="location.href='/res/html/manager/getOrder.html'">可接订单</span>
+					<img src="/res/img/icon8.png"/>
+				</p>
+				<p onclick="alert('')">
+					<span>救援服务协议</span>
+					<img src="/res/img/icon8.png"/>
+				</p>
+				<p>
+					<span>救援客服热线 <a style="color: blue;position: relative;top: -0.06rem;margin-left: 0.1rem;" href="tel:110">123456</a></span>
+					<img src="/res/img/icon8.png"/>
+				</p>
+			</div>
+		</div>
+		</form>
+		<iframe id="iframe1"  width="0rem" height="0rem"></iframe>
+	</body>
+	<script type="text/javascript">
+		$('.nav span').click(function(){
+			var index = $(this).index();
+			if(index == 0){
+					$('.left').show();
+					$('.left_main').animate({left:'0'},200);
+				}
+			});
+		
+		$('.left').click(function(e){
+			$('.left_main').animate({left:'-100%'},200,function(){
+				$('.left').hide();
+			});
+		})
+		$('.left_main').click(function(e){
+			e.stopPropagation()
+		})
+	</script>
+	<script type="text/javascript">
+	// 百度地图API功能
+	var map = new BMap.Map("map");    // 创建Map实例
+	var point = new BMap.Point(113.667632,34.75413);
+	var marker2 = new BMap.Marker(point);  // 创建标注
+	map.enableScrollWheelZoom(false); //滚轮开启
+    map.addOverlay(marker2);
+	  // 设置地图显示的城市 此项是必须设置的
+	map.setCurrentCity("河南省郑州市火车站");   
+	map.centerAndZoom(point, 13);  // 初始化地图,设置中心点坐标和地图级别
+	map.addEventListener("click", showInfo);
+	function showInfo(e){
+		map.removeOverlay(marker2);
+		document.getElementById("lng").value=e.point.lng;
+		document.getElementById("lat").value=e.point.lat;
+        marker2 = new BMap.Marker(new BMap.Point(e.point.lng,e.point.lat)); 
+        map.addOverlay(marker2);
+	}
+	var geoc = new BMap.Geocoder();    
+	map.addEventListener("click", function(e){        
+
+	}); 
+	map.addEventListener("touchmove", function(e) {
+		map.enableDragging();
+		});
+	//触摸结束始，禁止拖拽
+	map.addEventListener("touchend", function(e) {
+		map.disableDragging();
+	});
+	function codeAddress() {
+        // 创建地址解析器实例
+        var myGeo = new BMap.Geocoder();
+        // 将地址解析结果显示在地图上,并调整地图视野
+        myGeo.getPoint(document.getElementById("address").value, function (point) {
+            if (point) {
+            	map.removeOverlay(marker2);
+                map.centerAndZoom(point, 14);
+                document.getElementById("lng").value = point.lng;
+                document.getElementById("lat").value = point.lat;
+                marker2 = new BMap.Marker(point); 
+                map.addOverlay(marker2);
+            } else {
+            	map.removeOverlay(marker2);
+                alert("您输入的地址在地图中未找到，请重新输入地址!");
+            }
+        }, "");
+    }
+</script>
+<script type="text/javascript">
+	 
+</script>
+
+
+</html>

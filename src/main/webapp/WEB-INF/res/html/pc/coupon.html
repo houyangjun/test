@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>优惠劵列表</title>
+    <script src="/res/js/layui/layui.js" ></script>
+    <link rel="stylesheet" href="../pc/plugins/layui/layui.js">
+</head>
+<body>
+<div>
+
+    <script type="text/html" id="myForm">
+        <form class="layui-form layui-form-pane" action="" onsubmit="return false">
+            <div class="layui-form-item">
+                <label class="layui-form-label">优惠劵</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="name"   class="layui-input" id="name">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">开始时间</label>
+                <div class="layui-input-inline">
+                    <input type="date" name="begin"  class="layui-input" id="begin">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">结束时间</label>
+                <div class="layui-input-inline">
+                    <input type="date" name="end"   class="layui-input" id="end">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">折扣</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="discount"   class="layui-input" id="discount">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="remark"   class="layui-input" id="remark">
+                </div>
+            </div>
+            <!--<div class="layui-form-item">-->
+                <!--<label class="layui-form-label">del</label>-->
+                <!--<div class="layui-input-inline">-->
+                    <!--<input type="text" name="del"   class="layui-input">-->
+                <!--</div>-->
+            <!--</div>-->
+
+            <button  class="layui-btn layui-hide" lay-submit lay-filter="userAddForm" id="userAddForm">立即提交</button>
+        </form>
+
+    </script>
+
+
+
+
+    <div class="layui-row">
+        <form class="layui-form layui-form-pane" action="">
+            <div class="layui-form-item">
+
+
+                <label class="layui-form-label">优惠劵</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="name" class="layui-input">
+                </div>
+                <div class="layui-input-inline">
+                    <button type="submit" class="layui-btn" lay-submit="" lay-filter="searchBtn">搜索</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+
+    <div class="layui-row">
+
+        <table class="layui-hide" id="test" lay-filter="test"></table>
+
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+                <button class="layui-btn layui-btn-sm" lay-event="getCheckLength">获取选中数目</button>
+                <button class="layui-btn layui-btn-sm" lay-event="isAll">验证是否全选</button>
+                <button class="layui-btn layui-btn-sm" lay-event="userAdd">新增</button>
+                <!--<button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="userDel">删除</button>-->
+            </div>
+        </script>
+
+
+        <script type="text/html" id="barDemo">
+            <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </script>
+
+    </div>
+
+
+</div>
+
+<script>
+    layui.use(['element', 'form', 'jquery', 'table', 'util' ,'layer' ], function () {
+        var element = layui.element;
+        var form = layui.form;
+        var $ = layui.jquery;
+        var table = layui.table;
+        var util = layui.util;
+        var layer = layui.layer;
+
+
+
+        // 监听 新增的按钮
+        form.on('submit(userAddForm)', function(data){
+            console.log(data.field)
+              // layer.msg(JSON.stringify(data.field));
+            // 发送 ajax 提交到后台..
+            $.ajax({
+                url:'/api/coupon/addConpon',
+                type:'POST',
+                // data:data.field,
+                data:{
+                    "name":$("#name").val(),
+                    "begin":$("#begin").val(),
+                    "end":$("#end").val(),
+                    "discount":$("#discount").val(),
+                    "remark":$("#remark").val(),
+
+                },
+                success:function (res) {
+                    console.log(res)
+                    if (res.code==200) {
+                        layer.msg("添加成功")
+                    }else{
+                        layer.msg("添加失败, 请重新再来一次")
+                    }
+                },
+                dataType:'JSON'
+            });
+            return false;
+        });
+
+        // 监听搜索的按钮
+        form.on('submit(searchBtn)', function (data) {
+            // layer.msg(JSON.stringify(data.field));
+            console.log(data.field);
+            // 执行表格重载
+            table.reload('test', {
+                where: { //设定异步数据接口的额外参数，任意设
+                    //  aaaaaa: 'xxx'
+                    //, bbb: 'yyy'
+                    //   username: data.field.username
+                    ///   , realName: data.field.realName
+                    // , type: data.field.type  contents  status
+                    name:data.field.name,
+                }
+                , page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            }); //只重载数据
+
+
+
+            return false;
+        });
+
+
+        table.render({
+            elem: '#test'
+            ,url:'/api/coupon/selectcoupon'
+            ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            ,defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                title: '提示'
+                ,layEvent: 'LAYTABLE_TIPS'
+                ,icon: 'layui-icon-tips'
+            }]
+            ,title: '用户数据表'
+            ,cols: [[
+                {type: 'checkbox', fixed: 'left'}
+                ,{field:'id', title:'ID'}
+                ,{field:'name', title:'优惠劵', edit: 'text'}
+                ,{field:'begin', title:'开始时间', edit: 'text'}
+                ,{field:'end', title:'结束时间'}//,templet: "<div>{{layui.util.toDateString(d.createtime,'yyyy-MM-dd HH:mm:ss')}}</div>"}
+                ,{field:'discount', title:'打折百分比'}//,templet:"<div>{{layui.util.toDateString(d.createtime,'yyyy-MM-dd HH:mm:ss')}}</div>",hide : 'true'}
+                ,{field:'remark', title:'备注', width:150}
+                ,{fixed: 'right', title:'操作', toolbar: '#barDemo'}
+            ]]
+            ,page: true
+
+        });
+        // 监听 开关
+        form.on('switch(switchTest)',function (obj) {
+            console.log("切换了按钮");
+            console.log(obj);
+        });
+
+        //头工具栏事件
+        table.on('toolbar(test)', function(obj){
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch(obj.event){
+                case 'getCheckData':
+                    var data = checkStatus.data;
+                    layer.alert(JSON.stringify(data));
+                    break;
+                case 'getCheckLength':
+                    var data = checkStatus.data;
+                    layer.msg('选中了：'+ data.length + ' 个');
+                    break;
+                case 'isAll':
+                    layer.msg(checkStatus.isAll ? '全选': '未全选');
+                    break;
+                //自定义头工具栏右侧图标 - 提示
+                case 'LAYTABLE_TIPS':
+                    layer.alert('这是工具栏右侧自定义的一个图标按钮');
+                    break;
+                case 'userAdd':
+                    //layer.msg("我是新增")
+                    layer.open({
+                        title: '新增或者修改一个数据',
+                        type: 1,
+                        content: $('#myForm').html(),
+                        area: ['890px', '680px'],
+                        btn: ['确定', '返回'],
+                        yes: function (index, layero) {
+                            // yes 只针对 第一个 按钮!!
+                            // alert("点击后, 向后台发送  ajax 数据, 增加一条信息")
+                            // yes 后 需要 点击  立即提交的隐藏的按钮.
+                            $("#userAddForm").click();
+                        },
+                        shadeClose: false, // 是否点击遮罩关闭
+                        success: function (index, layero) {
+                            // alert("层弹出后的回调方法!!  在框框弹出之前的 执行的方法, 一般用于获取数据 ")
+                            // 重要, 当界面 被 弹窗, 或者 改变的时候, 或者 动态修改/增加/删除的 时候 必须  重新渲染!!
+                            form.render(); // 渲染全部
+                        }
+                    });
+
+
+                    break;
+                case 'userDel':
+                    // layer.msg("我是删除")
+                    // 1. 获取 N 个 id
+                    var data = checkStatus.data; // 拿到了选中的 所有数据
+                    // 从显示上看, 这个data 是个 数组. , 需要遍历 才可以 拿到 其中 id
+                    var ids="";
+                    $.each(data,function (index, item) {
+                        console.log(item.id); // 遍历 拿到了 id   把id  1. 变为一组 集合/数组  2. 一个拼接.     id=4&id=9&id=10
+                        ids+= "id="+item.id+"&"
+                    });
+                    console.log(ids);
+                    // 2.  弹出一个 确定删除么 ?
+                    layer.confirm('是否确定删除?????', {icon: 3, title:'确定删除?'}, function(index){
+                        // 3. 如过确定,  发送 ajax 到后台
+                        $.ajax({
+                            // url:'/customer/deleteById?biaoji=del&'+ids,
+                            url:'/api/coupon/deleteById',
+                            type:'get',
+                            dataType:'json',
+                            success:function (res) {
+                                console.log(res)
+                                if (res.code==200){
+                                    layer.msg("删除成功")
+                                    // 重载表格. 提升体验度.
+                                    table.reload('test'); //只重载数据
+                                }
+                            }
+                        });
+                        layer.close(index);
+                    });
+                    // 4. 后台处理  ids . 就可以了..
+                    break;
+            };
+        });
+        //监听行工具事件
+        table.on('tool(test)', function(obj){
+            var data = obj.data;
+            //console.log(obj)
+            if(obj.event === 'del'){
+                layer.confirm('真的删除吗？', function(index){
+                    $.ajax({
+                        url:'/api/coupon/deleteById?id='+data.id,
+                        // url:'/customer/deleteById',
+                        type:'post',
+                        dataType:'json',
+                        success:function (res) {
+                            console.log(res)
+                            if (res.code==200){
+                                layer.msg("删除成功")
+                                // 重载表格. 提升体验度.
+                                table.reload('test'); //只重载数据
+                            }
+                        }
+                    });
+                    obj.del();
+                    layer.close(index);
+                });
+            } else if(obj.event === 'edit'){
+                alert("编辑成功！");
+                order=data;
+                $.ajax({
+                    type:'GET',
+                    url:'/api/coupon/updateCoupon',
+                    data:{
+                        'id':data.id,
+                        'name':data.name,
+                        'begin':data.begin,
+                        'end':data.end,
+                        'discount':data.discount,
+                        'remark':data.remark,
+                        'del':data.del
+                    },
+                    dataType:'text',
+                    success:function (data) {
+                        location.reload();
+                    },
+                    error: function (data) {
+                        alert("异常");
+                    }
+                });
+
+            }
+        });
+
+
+
+    });
+
+</script>
+
+
+</body>
+</html>

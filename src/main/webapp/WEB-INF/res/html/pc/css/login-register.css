@@ -1,0 +1,19 @@
+body{height: 100vh;
+background: #ea5c54;
+background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, #ea5c54), color-stop(100%, #bb6dec));
+background: -webkit-linear-gradient(-45deg, #ea5c54 0%, #bb6dec 100%);background: -webkit-linear-gradient(315deg, #ea5c54 0%, #bb6dec 100%);
+background: linear-gradient(135deg, #ea5c54 0%, #bb6dec 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ea5c54', endColorstr='#bb6dec', GradientType=1);}
+
+.login-wrap{width: 290px;height: 300px;padding: 100px 15px 15px;border-top: 2px solid #009688;
+position: absolute;left: 0;right: 0;top: 0;bottom: 0;margin: auto;
+background: #35394a;
+background: -webkit-gradient(linear, left bottom, right top, color-stop(0%, #35394a), color-stop(100%, #1f222e));
+background: -webkit-linear-gradient(45deg, #35394a 0%, #1f222e 100%);
+background: linear-gradient(45deg, #35394a 0%, #1f222e 100%);
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#35394a', endColorstr='#1f222e', GradientType=1);}
+
+.wrap-title{color: #afafaf;height: 60px;font-size: 16px;}
+.layui-btn{margin-top: 40px;}
+.login-wrap .layui-form-label{width: 50px;color: #999;}
+.login-wrap .layui-input-block{margin-left: 50px;}

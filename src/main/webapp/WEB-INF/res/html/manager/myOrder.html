@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,u ser-scalable=no">
+		<link rel="stylesheet" type="text/css" href="/res/css/reset.css"/>
+		<script type="text/javascript" src="/res/js/jquery-3.2.1.js"></script>
+		<title>我的订单</title>
+		<style type="text/css">
+			.order { position: relative;width: 94%;height: 2.1rem;background: #EFEFEF;margin: 0rem auto 0.2rem;padding-top: 0.2rem;border-radius: 0.1rem; }
+			.order p { font-size: 0.3rem;line-height: 0.5rem;padding-left: 0.2rem;position: relative;z-index: 2; }
+			img { width: 1.8rem;position: absolute;right: 0.2rem;top: 0.2rem; }
+			span { display: inline-block;position: absolute;right: 0.2rem;font-size: 0.28rem;bottom: 0.2rem; }
+		</style>
+	</head>
+	<body>
+		<br/>
+		<div id="order">
+			<!--<div onclick="getOrder('38')" class="order">-->
+				<!--<p>联系电话：18003849075</p>-->
+				<!--<p>车牌号: undefined</p>-->
+				<!--<p>地址：郑州市金水区</p>-->
+				<!--<p>￥：元</p>-->
+				<!--<img src="/img/icon9.png" alt="">-->
+			<!--</div>-->
+		</div>
+	</body>
+	<script type="text/javascript">
+	 		$(function () {
+	 				$.ajax({
+						url:"/orders/myOrder",
+						type:"GET",
+						dataType:"JSON",
+						success:function (res) {
+							console.log(res)
+							if (res.code===0) {
+								// 将 res.data 中的数据 渲染到 前端页面. --- 前后端分离的思想
+										$.each(res.data, function (index,item) {
+											if(item.status==3){
+												$(" \t<div onclick=\"getOrder('"+item.id+"')\" class=\"order\">\n" +
+														"\t\t\t\t<p>联系电话："+item.phone+"</p>\n" +
+														"\t\t\t\t<p>车牌号: 没有</p>\n" +
+														"\t\t\t\t<p>地址："+item.address+"</p>\n" +
+														"\t\t\t\t<p>￥："+item.cost+"元</p>\n" +
+														"<img src=\"/res/img/icon10.png\"/>"+
+														"\t\t\t</div> " ).appendTo("#order")  ;
+											}else {
+												$(" \t<div onclick=\"getOrder('"+item.id+"')\" class=\"order\">\n" +
+														"\t\t\t\t<p>联系电话："+item.phone+"</p>\n" +
+														"\t\t\t\t<p>车牌号: 没有</p>\n" +
+														"\t\t\t\t<p>地址："+item.address+"</p>\n" +
+														"\t\t\t\t<p>￥："+item.cost+"元</p>\n" +
+														"<img src=\"/res/img/icon9.png\"/>"+
+														"\t\t\t</div> " ).appendTo("#order")  ;
+											}
+										});
+							}
+						}
+					});
+			});
+
+
+
+	</script>
+</html>

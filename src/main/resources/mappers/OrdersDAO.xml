@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jun.dao.OrdersDAO">
+  <resultMap id="BaseResultMap" type="com.jun.bean.Orders">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="mid" jdbcType="INTEGER" property="mid" />
+    <result column="lng" jdbcType="VARCHAR" property="lng" />
+    <result column="lat" jdbcType="VARCHAR" property="lat" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="updtetime" jdbcType="TIMESTAMP" property="updtetime" />
+    <result column="endtime" jdbcType="TIMESTAMP" property="endtime" />
+    <result column="contents" jdbcType="VARCHAR" property="contents" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="attached" jdbcType="VARCHAR" property="attached" />
+    <result column="cost" jdbcType="VARCHAR" property="cost" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, phone, mid, lng, lat, createtime, updtetime, endtime, contents, `status`, address,
+    attached, cost
+  </sql>
+  <select id="findAll" parameterType="Orders" resultType="com.jun.bean.Orders">
+    select * from orders
+  </select>
+  <insert id="addOrders" parameterType="Orders">
+    insert into orders values(null,#{phone},#{mid},#{lng},#{lat},#{createtime},#{updtetime},#{endtime},#{contents},#{status},#{address},#{attached},#{cost})
+
+  </insert>
+  <select id="count" parameterType="integer" resultType="java.lang.Integer">
+   select COUNT(*) from orders
+  </select>
+
+  <select id="selectByOrders" resultType="com.jun.bean.Orders">
+  select * from orders  limit ${pageCode-1},#{pageSize}
+  </select>
+
+  <update id="UpdateOrders" parameterType="Orders">
+    UPDATE orders SET status =#{status}  WHERE id =#{id}
+  </update>
+
+
+  <select id="selectOrdersByIfs"  resultType="com.jun.bean.Orders" parameterType="com.jun.bean.Orders">
+    select * from orders  where 1=1
+    <choose>
+      <when test="status !=null and status!=''">
+        --         and sname = #{sname}
+        and status like concat('%',#{status},'%')
+      </when>
+      <when test="phone !=null and phone!=''">
+        and phone = #{phone}
+      </when>
+    </choose>
+  </select>
+
+
+
+  <select id="selectByExample" parameterType="com.jun.bean.OrdersExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from orders
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+    <if test="limit != null">
+      <if test="offset != null">
+        limit ${offset}, ${limit}
+      </if>
+      <if test="offset == null">
+        limit ${limit}
+      </if>
+    </if>
+  </select>
+
+  <select id="findAllOrders" parameterType="Orders" resultType="com.jun.bean.Orders">
+    select * from orders  where mid=#{mid}  and status=#{status}
+  </select>
+
+  <select id="selectfindAllOrdersBid" parameterType="int" resultType="com.jun.bean.Orders">
+    select * from orders  where id=#{id}
+  </select>
+
+  <update id="UPAllOrders" parameterType="int">
+    UPDATE orders SET mid=#{mid} WHERE id=#{id}
+  </update>
+  <update id="UPAllOrdersStrtus" parameterType="int">
+    UPDATE orders SET status=#{status} WHERE id=#{id}
+  </update>
+<delete id="delectOrders" parameterType="int">
+  DELETE FROM orders WHERE id=#{id}
+</delete>
+  <insert id="insertSelective" parameterType="com.jun.bean.Orders">
+    insert into orders
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="mid != null">
+        mid,
+      </if>
+      <if test="lng != null">
+        lng,
+      </if>
+      <if test="lat != null">
+        lat,
+      </if>
+      <if test="createtime != null">
+        createtime,
+      </if>
+      <if test="updtetime != null">
+        updtetime,
+      </if>
+      <if test="endtime != null">
+        endtime,
+      </if>
+      <if test="contents != null">
+        contents,
+      </if>
+      <if test="status != null">
+        `status`,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="attached != null">
+        attached,
+      </if>
+      <if test="cost != null">
+        cost,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="mid != null">
+        #{mid,jdbcType=INTEGER},
+      </if>
+      <if test="lng != null">
+        #{lng,jdbcType=VARCHAR},
+      </if>
+      <if test="lat != null">
+        #{lat,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updtetime != null">
+        #{updtetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endtime != null">
+        #{endtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="contents != null">
+        #{contents,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="attached != null">
+        #{attached,jdbcType=VARCHAR},
+      </if>
+      <if test="cost != null">
+        #{cost,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByExampleSelective" parameterType="map">
+    update orders
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.phone != null">
+        phone = #{record.phone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mid != null">
+        mid = #{record.mid,jdbcType=INTEGER},
+      </if>
+      <if test="record.lng != null">
+        lng = #{record.lng,jdbcType=VARCHAR},
+      </if>
+      <if test="record.lat != null">
+        lat = #{record.lat,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null">
+        createtime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updtetime != null">
+        updtetime = #{record.updtetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.endtime != null">
+        endtime = #{record.endtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.contents != null">
+        contents = #{record.contents,jdbcType=VARCHAR},
+      </if>
+      <if test="record.status != null">
+        `status` = #{record.status,jdbcType=VARCHAR},
+      </if>
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.attached != null">
+        attached = #{record.attached,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cost != null">
+        cost = #{record.cost,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>

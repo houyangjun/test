@@ -1,0 +1,98 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>派单</title>
+    <link href="../pc/plugins/layui/css/layui.css" rel="stylesheet"/>
+    <!-- 引入layui的样式 -->
+    <script charset="utf-8" src="../pc/plugins/layui/layui.js"></script>
+    <!-- 引入layui的js -->
+    <script charset="UTF-8" src="../pc/js/jquery-1.8.3.js"></script>
+</head>
+<body>
+<form class="layui-form layui-form-pane" action="#" method="post">
+    <div class="layui-form-item">
+        <label class="layui-form-label">工程师</label>
+        <div class="layui-input-inline">
+            <div class="layui-unselect layui-form-select">
+                <select name="mid" id="mid" lay-filter="mid">
+                    <option value="0">请选择</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" value="提交" lay-submit lay-filter="btnAdd">提交</button>
+        </div>
+    </div>
+
+</form>
+<script>
+    $(function () {
+
+    })
+</script>
+<script>
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form;
+        var $ = layui.jquery;
+        var layer = layui.layer;
+        var index = parent.layer.getFrameIndex(window.name);
+
+        // form.on('select(select)', function (data) {
+        //     var txtval = data.elem[data.elem.selectedIndex].text;//获取选中的文本值。
+        //     show();
+        // });
+
+        $.ajax({
+            url: "/api/master/selectMaster",
+            type: "get",
+            dataType: "JSON",
+            success: function (res) {
+               /* alert("123");
+                for (var i = 0; i < res.length; i++) {
+                    var obj = $("[name=mid]");
+                    var ob = " <option value='" + res[i].id + "'>" + res[i].name + "</option>";
+                    obj.append(ob);
+                }
+                layui.form.render('select');*/
+
+                layer.msg(res.msg);
+                var content = '';
+                content += '<option value="">请选择工程师</option>';
+                $.each(res.customerList, function (index, item) {
+                    content += '<option value="' + item.id + '">' + item.name + '</option>'
+                });
+                //alert(content);
+                $("#mid").html(content);
+                layui.form.render('select');  //这里就是我们要渲染的地方了
+            }
+        });
+
+
+        form.on('submit(btnAdd)', function (data) {
+            $.ajax({
+                type: "post",
+                url: "/api/master/uptMaster",
+                data: {
+                    "mid": $('#mid').val(),
+                },
+                dataType: "text",
+                success: function (data) {
+                    console.log(data)
+                    if (data.code == 0) {
+                        layer.alert(data.msg);
+                        parent.layer.close(index);
+                    } else {
+                        layer.alert(data.msg);
+                        parent.layer.close(index);
+                    }
+                }
+            });
+            return false;
+        });
+    })
+</script>
+</body>
+</html>
